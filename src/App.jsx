@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import ApiStatus from './components/ApiStatus'
 import Boards from './pages/Boards'
+import AdminQuick from './pages/AdminQuick'
 
 export default function App() {
   return (
@@ -19,10 +20,11 @@ export default function App() {
       <main>
         <Routes>
           <Route path="/" element={<Boards />} />
-          <Route path="/admin" element={<div style={{ padding: '1rem' }}>Admin (coming soon)</div>} />
+          <Route path="/admin" element={<AdminQuick />} />
         </Routes>
       </main>
     </BrowserRouter>
   )
 }
+
 
