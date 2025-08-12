@@ -29,23 +29,18 @@ export default function Boards() {
       try {
         setLoading(true); setError(null)
 
-        // get all aircraft
         const aircraft = await listAircraft()
         const aircraftById = new Map(aircraft.map(a => [a.id, a]))
 
-        // get all flights across aircraft 
         const flightLists = await Promise.all(
           aircraft.map(a => listFlightsForAircraft(a.id).catch(() => []))
         )
         const flights = flightLists.flat()
-
         const selectedIdNum = Number(airportId)
 
-        // split them by the airport
         const arrFlights = flights.filter(f => f.toAirportId === selectedIdNum)
         const depFlights = flights.filter(f => f.fromAirportId === selectedIdNum)
 
-        // build display rows
         const arrRows = buildRows(arrFlights, aircraftById, 'arrivals')
         const depRows = buildRows(depFlights, aircraftById, 'departures')
 
@@ -65,8 +60,8 @@ export default function Boards() {
   }, [airportId, tick])
 
   return (
-    <div style={{ padding: '1rem', display: 'grid', gap: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ display: 'grid', gap: '1rem' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <h2 style={{ margin: 0 }}>Arrivals & Departures</h2>
         <AirportSwitcher value={airportId} onChange={setAirportId} />
       </div>
@@ -75,14 +70,15 @@ export default function Boards() {
       {error && <div style={{ color: 'crimson' }}>{error}</div>}
 
       <section>
-        <h3 style={{ marginBottom: '0.5rem' }}>Arrivals</h3>
+        <h3>Arrivals</h3>
         <FlightTable rows={arrivals} mode="arrivals" />
       </section>
 
       <section>
-        <h3 style={{ marginBottom: '0.5rem' }}>Departures</h3>
+        <h3>Departures</h3>
         <FlightTable rows={departures} mode="departures" />
       </section>
     </div>
   )
 }
+
