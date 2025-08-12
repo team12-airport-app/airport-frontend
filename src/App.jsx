@@ -6,18 +6,15 @@ import AdminQuick from './pages/AdminQuick'
 export default function App() {
   return (
     <BrowserRouter>
-      <header style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '1rem', borderBottom: '1px solid #ddd'
-      }}>
-        <nav style={{ display: 'flex', gap: '1rem' }}>
+      <header className="site-header">
+        <nav className="site-nav">
           <Link to="/">Boards</Link>
           <Link to="/admin">Admin</Link>
         </nav>
         <ApiStatus />
       </header>
 
-      <main>
+      <main className="site-main">
         <Routes>
           <Route path="/" element={<Boards />} />
           <Route path="/admin" element={<AdminQuick />} />

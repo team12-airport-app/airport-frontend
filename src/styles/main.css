@@ -1,0 +1,191 @@
+:root {
+  --bg: #ffffff;
+  --text: #111;
+  --muted: #555;
+  --line: #e3e3e3;
+  --accent: #0a7cff;
+  --accent-ink: #fff;
+
+  --gap-xs: 0.5rem;
+  --gap-sm: 0.75rem;
+  --gap: 1rem;
+  --gap-lg: 1.5rem;
+
+  --radius: 0.5rem;
+  --border-w: 0.0625rem;
+  --shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+html {
+  font-size: 100%;
+}
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Inter,
+    Arial,
+    sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.4;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gap);
+  border-bottom: var(--border-w) solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 1;
+}
+.site-nav {
+  display: flex;
+  gap: var(--gap);
+}
+.site-nav a {
+  text-decoration: none;
+  color: var(--text);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+}
+.site-nav a:hover {
+  background: #f6f6f6;
+}
+
+.site-main {
+  padding: var(--gap);
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+section {
+  display: grid;
+  gap: var(--gap-sm);
+  background: #fafafa;
+  border: var(--border-w) solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--gap);
+}
+h2,
+h3 {
+  margin: 0;
+}
+h3 {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: var(--border-w) solid var(--line);
+  vertical-align: top;
+}
+thead th {
+  font-weight: 700;
+}
+tbody tr:nth-child(even) {
+  background: #fcfcfc;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+input,
+select {
+  padding: 0.5rem 0.625rem;
+  border-radius: var(--radius);
+  border: var(--border-w) solid var(--line);
+  background: #fff;
+}
+button {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  border: var(--border-w) solid var(--line);
+  background: #f3f5f7;
+  cursor: pointer;
+}
+button:hover {
+  background: #eef2f6;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999rem;
+  color: var(--accent-ink);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow);
+}
+.badge--ok {
+  background: #16a34a;
+}
+.badge--fail {
+  background: #dc2626;
+}
+.badge--checking {
+  background: #6b7280;
+}
+
+.table--flights {
+  table-layout: fixed;
+}
+
+.table--flights col.col-airline {
+  width: 30%;
+}
+.table--flights col.col-aircraft {
+  width: 25%;
+}
+.table--flights col.col-place {
+  width: 25%;
+}
+.table--flights col.col-time {
+  width: 20%;
+}
+
+@media (max-width: 40rem) {
+  .table--flights col.col-airline {
+    width: 40%;
+  }
+  .table--flights col.col-aircraft {
+    width: 20%;
+  }
+  .table--flights col.col-place {
+    width: 20%;
+  }
+  .table--flights col.col-time {
+    width: 20%;
+  }
+}

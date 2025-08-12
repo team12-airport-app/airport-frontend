@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import client from '../api/client'
 
 export default function ApiStatus() {
-  const [status, setStatus] = useState('checking') 
+  const [status, setStatus] = useState('checking') // 'ok' | 'fail'
 
   useEffect(() => {
     let ignore = false
@@ -17,17 +17,15 @@ export default function ApiStatus() {
     return () => { ignore = true }
   }, [])
 
-  const color = status === 'ok' ? 'green' : status === 'fail' ? 'crimson' : 'gray'
+  const cls =
+    status === 'ok' ? 'badge badge--ok' :
+    status === 'fail' ? 'badge badge--fail' :
+    'badge badge--checking'
 
   return (
-    <span style={{
-      padding: '0.25rem 0.5rem',
-      borderRadius: '0.5rem',
-      background: color,
-      color: 'white',
-      fontSize: '0.9rem'
-    }}>
+    <span className={cls}>
       API: {status === 'checking' ? 'Checking…' : status === 'ok' ? 'Connected' : 'Unavailable'}
     </span>
   )
 }
+
