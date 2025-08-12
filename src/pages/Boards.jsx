@@ -1,25 +1,67 @@
 import { useEffect, useRef, useState } from 'react'
 import AirportSwitcher from '../components/AirportSwitcher'
+import FlightTable from '../components/FlightTable'
+import { listAircraft, listFlightsForAircraft } from '../api/aircraft'
+import { buildRows } from '../utils/flightRows'
 
 const REFRESH_MS = Number(import.meta.env.VITE_REFRESH_MS ?? 30000)
 
 export default function Boards() {
   const [airportId, setAirportId] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [arrivals, setArrivals] = useState([])
+  const [departures, setDepartures] = useState([])
   const [tick, setTick] = useState(0)
   const timerRef = useRef()
 
-  // start auto refresh. this is timer
   useEffect(() => {
-    // clear previous
     clearInterval(timerRef.current)
     timerRef.current = setInterval(() => setTick(t => t + 1), REFRESH_MS)
     return () => clearInterval(timerRef.current)
   }, [])
 
-
   useEffect(() => {
+    let ignore = false
     if (!airportId) return
 
+    ;(async () => {
+      try {
+        setLoading(true); setError(null)
+
+        // get all aircraft
+        const aircraft = await listAircraft()
+        const aircraftById = new Map(aircraft.map(a => [a.id, a]))
+
+        // get all flights across aircraft 
+        const flightLists = await Promise.all(
+          aircraft.map(a => listFlightsForAircraft(a.id).catch(() => []))
+        )
+        const flights = flightLists.flat()
+
+        const selectedIdNum = Number(airportId)
+
+        // split them by the airport
+        const arrFlights = flights.filter(f => f.toAirportId === selectedIdNum)
+        const depFlights = flights.filter(f => f.fromAirportId === selectedIdNum)
+
+        // build display rows
+        const arrRows = buildRows(arrFlights, aircraftById, 'arrivals')
+        const depRows = buildRows(depFlights, aircraftById, 'departures')
+
+        if (ignore) return
+        setArrivals(arrRows)
+        setDepartures(depRows)
+        setLoading(false)
+      } catch (e) {
+        if (!ignore) {
+          setError('Failed to load flights'); setLoading(false)
+          setArrivals([]); setDepartures([])
+        }
+      }
+    })()
+
+    return () => { ignore = true }
   }, [airportId, tick])
 
   return (
@@ -29,44 +71,18 @@ export default function Boards() {
         <AirportSwitcher value={airportId} onChange={setAirportId} />
       </div>
 
+      {loading && <div>Loading flights…</div>}
+      {error && <div style={{ color: 'crimson' }}>{error}</div>}
+
       <section>
         <h3 style={{ marginBottom: '0.5rem' }}>Arrivals</h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <Th>Flight #</Th><Th>Airline</Th><Th>From</Th><Th>Scheduled</Th><Th>Gate</Th><Th>Status</Th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><Td colSpan="6" style={{ textAlign: 'center', padding: '1rem' }}>No data yet</Td></tr>
-            </tbody>
-          </table>
-        </div>
+        <FlightTable rows={arrivals} mode="arrivals" />
       </section>
 
       <section>
         <h3 style={{ marginBottom: '0.5rem' }}>Departures</h3>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <Th>Flight #</Th><Th>Airline</Th><Th>To</Th><Th>Scheduled</Th><Th>Gate</Th><Th>Status</Th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><Td colSpan="6" style={{ textAlign: 'center', padding: '1rem' }}>No data yet</Td></tr>
-            </tbody>
-          </table>
-        </div>
+        <FlightTable rows={departures} mode="departures" />
       </section>
     </div>
   )
-}
-
-function Th({ children }) {
-  return <th style={{ textAlign: 'left', padding: '0.5rem', borderBottom: '1px solid #eee', fontWeight: 600 }}>{children}</th>
-}
-function Td({ children, ...rest }) {
-  return <td {...rest} style={{ padding: '0.5rem', borderBottom: '1px solid #f5f5f5' }}>{children}</td>
 }
